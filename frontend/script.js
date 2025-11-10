@@ -121,19 +121,20 @@ function displayResults(results) {
 // Las demás funciones display... se mantienen igual
 function displayDatasetInfo(info) {
     const container = document.getElementById('datasetInfo');
+    
     container.innerHTML = `
         <div class="info-item">
-            <strong>Forma del dataset:</strong> ${info.shape[0]} filas × ${info.shape[1]} columnas
+            <strong>Total de instancias:</strong> ${info.total_instances.toLocaleString()}
         </div>
         <div class="info-item">
-            <strong>Columnas:</strong> ${info.columns.slice(0, 5).join(', ')}${info.columns.length > 5 ? '...' : ''}
+            <strong>Total de características (columnas):</strong> ${info.features_count.toLocaleString()}
         </div>
         <div class="info-item">
-            <strong>Tipos de datos:</strong>
-            <pre style="max-height: 200px; overflow-y: auto;">${JSON.stringify(info.dtypes, null, 2)}</pre>
+            <strong>Columna usada para estratificar:</strong> ${info.stratify_column_used}
         </div>
     `;
 }
+
 
 function displaySplitSizes(sizes) {
     const container = document.getElementById('splitSizes');
