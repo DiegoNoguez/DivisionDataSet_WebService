@@ -155,6 +155,7 @@ function displaySplitSizes(sizes) {
     `;
 }
 
+// === Mostrar distribución de protocolos ===
 function displayProtocolDistribution(distribution) {
     const container = document.getElementById('protocolDistribution');
 
@@ -164,26 +165,46 @@ function displayProtocolDistribution(distribution) {
     }
 
     let html = '';
-    const sets = ['original', 'train', 'validation', 'test'];
 
-    sets.forEach(setName => {
-        if (distribution[setName]) {
-            html += `<h4 style="margin-top: 20px;">${getSetDisplayName(setName)}</h4>`;
-            html += createDistributionTable(distribution[setName]);
-        }
-    });
+    // Si el backend devuelve directamente {tcp: ..., udp: ...}
+    // en lugar de {train: {...}, validation: {...}}, lo manejamos igual.
+    const looksLikeFlat = Object.keys(distribution).every(
+        key => typeof distribution[key] === 'number'
+    );
+
+    if (looksLikeFlat) {
+        console.warn("Distribución plana detectada:", distribution);
+        html += "<h4>Distribución de protocolos (única)</h4>";
+        html += createDistributionTable(distribution);
+    } else {
+        console.log("Distribución por subconjuntos detectada:", distribution);
+        const sets = ['original', 'train', 'validation', 'test'];
+        sets.forEach(setName => {
+            if (distribution[setName]) {
+                html += `<h4 style="margin-top: 20px;">${getSetDisplayName(setName)}</h4>`;
+                html += createDistributionTable(distribution[setName]);
+            }
+        });
+    }
 
     container.innerHTML = html;
 }
 
+// === Crear tabla de distribución ===
 function createDistributionTable(setData) {
     if (!setData || typeof setData !== 'object') {
-        console.warn("Distribución vacía o inválida:", setData);
+        console.warn("Datos de distribución no válidos:", setData);
         return "<p>Sin datos disponibles.</p>";
     }
 
-    const protocols = Object.keys(setData);
-    const rows = protocols.map(protocol => `
+    const keys = Object.keys(setData);
+    // Si no hay claves, se retorna mensaje
+    if (keys.length === 0) {
+        return "<p>Sin datos disponibles.</p>";
+    }
+
+    // Generar filas
+    const rows = keys.map(protocol => `
         <tr>
             <td>${protocol}</td>
             <td>${setData[protocol].toLocaleString()}</td>
@@ -202,6 +223,7 @@ function createDistributionTable(setData) {
         </table>
     `;
 }
+
 
 
 function displayHistograms(histograms) {
