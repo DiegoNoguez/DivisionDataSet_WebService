@@ -3,11 +3,24 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-your-secret-key-here'
+#  Usar variable de entorno para seguridad
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-key-for-render')
 
-DEBUG = False
+# DEBUG debe ser False en producción
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '*']
+#  Hosts permitidos para Render
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '0.0.0.0',
+    'https://divisiondataset-webservice.onrender.com',  # Dominio de Render
+]
+
+#  Agregar el hostname externo de Render si existe
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -21,8 +34,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Primero
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  #  Para archivos estáticos en Render
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -33,15 +47,25 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'dataset_processor.urls'
 
+#  CORS configurado para producción
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-    "http://localhost:5500",
-    "http://127.0.0.1:5500",
-    "*"
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://divisiondataset-webservice-front.onrender.com/",
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True  # Solo para desarrollo
+#  Permitir todos los orígenes en desarrollo, pero no en producción
+CORS_ALLOW_ALL_ORIGINS = DEBUG  # Solo True si DEBUG es True
+
+#  Métodos permitidos
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
 
 TEMPLATES = [
     {
@@ -59,17 +83,33 @@ TEMPLATES = [
     },
 ]
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+#  Base de datos para Render
+#DATABASES = {
+#    'default': dj_database_url.config(
+#        default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
+#        conn_max_age=600
+#    )
+#}
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
+#  Configuración CRÍTICA para archivos estáticos en Render
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+#  WhiteNoise para servir archivos estáticos
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#  Configuración de seguridad para producción
+if not DEBUG:
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
