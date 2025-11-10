@@ -1,4 +1,8 @@
 import os
+import os
+os.environ["MPLBACKEND"] = "Agg"
+os.environ["MPLCONFIGDIR"] = "/tmp/matplotlib"
+
 import json
 import base64
 import pandas as pd
