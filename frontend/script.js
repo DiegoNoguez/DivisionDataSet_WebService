@@ -157,35 +157,36 @@ function displaySplitSizes(sizes) {
 
 function displayProtocolDistribution(distribution) {
     const container = document.getElementById('protocolDistribution');
-    
-    let html = '<h4>Dataset Original</h4>';
-    html += createDistributionTable(distribution.original);
-    
-    html += '<h4 style="margin-top: 20px;">Training Set</h4>';
-    html += createDistributionTable(distribution.train);
-    
-    html += '<h4 style="margin-top: 20px;">Validation Set</h4>';
-    html += createDistributionTable(distribution.validation);
-    
-    html += '<h4 style="margin-top: 20px;">Test Set</h4>';
-    html += createDistributionTable(distribution.test);
-    
+
+    if (!distribution || Object.keys(distribution).length === 0) {
+        container.innerHTML = "<p>No se pudo generar la distribución de protocolos.</p>";
+        return;
+    }
+
+    let html = '';
+    const sets = ['original', 'train', 'validation', 'test'];
+
+    sets.forEach(setName => {
+        if (distribution[setName]) {
+            html += `<h4 style="margin-top: 20px;">${getSetDisplayName(setName)}</h4>`;
+            html += createDistributionTable(distribution[setName]);
+        }
+    });
+
     container.innerHTML = html;
 }
 
-function createDistributionTable(distribution) {
-    if (!distribution || !distribution.train || !distribution.validation || !distribution.test) {
-        console.error("Estructura inesperada en protocol_type_distribution:", distribution);
-        return "<p style='color:red;'>Error: datos de distribución no válidos.</p>";
+function createDistributionTable(setData) {
+    if (!setData || typeof setData !== 'object') {
+        console.warn("Distribución vacía o inválida:", setData);
+        return "<p>Sin datos disponibles.</p>";
     }
 
-    const protocols = Object.keys(distribution.train);
+    const protocols = Object.keys(setData);
     const rows = protocols.map(protocol => `
         <tr>
             <td>${protocol}</td>
-            <td>${distribution.train[protocol] ?? 0}</td>
-            <td>${distribution.validation[protocol] ?? 0}</td>
-            <td>${distribution.test[protocol] ?? 0}</td>
+            <td>${setData[protocol].toLocaleString()}</td>
         </tr>
     `).join('');
 
@@ -194,9 +195,7 @@ function createDistributionTable(distribution) {
             <thead>
                 <tr>
                     <th>Protocolo</th>
-                    <th>Entrenamiento</th>
-                    <th>Validación</th>
-                    <th>Prueba</th>
+                    <th>Frecuencia</th>
                 </tr>
             </thead>
             <tbody>${rows}</tbody>

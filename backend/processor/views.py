@@ -137,44 +137,48 @@ def train_val_test_split_optimized(df, rstate=42, shuffle=True, stratify=None):
 
 def generate_optimized_results(train_set, val_set, test_set, stratify_col='protocol_type'):
     """Generar resultados optimizados para memoria"""
-    
-    # Información básica sin cargar datos pesados
-    results = {
-        'split_sizes': {
-            'train': len(train_set),
-            'validation': len(val_set),
-            'test': len(test_set)
-        },
-        'protocol_type_distribution': {
-            'train': train_set[stratify_col].value_counts().to_dict(),
-            'validation': val_set[stratify_col].value_counts().to_dict(),
-            'test': test_set[stratify_col].value_counts().to_dict()
-        },
-        'histograms': generate_optimized_histograms(train_set, val_set, test_set, stratify_col),
-        'dataset_info': {
-            'total_instances': len(train_set) + len(val_set) + len(test_set),
-            'features_count': len(train_set.columns),
-            'stratify_column_used': stratify_col
+    try:
+        results = {
+            'split_sizes': {
+                'train': len(train_set),
+                'validation': len(val_set),
+                'test': len(test_set)
+            },
+            'protocol_type_distribution': {
+                # Agregar dataset original (concatenado)
+                'original': pd.concat([train_set, val_set, test_set])[stratify_col].value_counts().to_dict(),
+                'train': train_set[stratify_col].value_counts().to_dict(),
+                'validation': val_set[stratify_col].value_counts().to_dict(),
+                'test': test_set[stratify_col].value_counts().to_dict()
+            },
+            'histograms': generate_optimized_histograms(train_set, val_set, test_set, stratify_col),
+            'dataset_info': {
+                'total_instances': len(train_set) + len(val_set) + len(test_set),
+                'features_count': len(train_set.columns),
+                'stratify_column_used': stratify_col
+            }
         }
-    }
-    
+    except Exception as e:
+        print(f"Error generando resultados: {e}")
+        results = {
+            'split_sizes': {},
+            'protocol_type_distribution': {},
+            'histograms': {},
+            'dataset_info': {}
+        }
     return results
 
 def generate_optimized_histograms(train_set, val_set, test_set, stratify_col='protocol_type'):
     """Generar histogramas optimizados"""
     histograms = {}
-    
-    # Configuración mínima de matplotlib
     plt.switch_backend('Agg')
-    
-    # Tamaño reducido de figuras para ahorrar memoria
     fig_size = (8, 4)
-    dpi = 80  # Reducir DPI para imágenes más pequeñas
+    dpi = 80
     
     try:
-        # Histograma training set
+        # TRAIN
         plt.figure(figsize=fig_size, dpi=dpi)
-        train_set[stratify_col].value_counts().plot(kind='bar')
+        train_set[stratify_col].value_counts().plot(kind='bar', color='skyblue')
         plt.title(f'Training Set - {stratify_col}')
         plt.xlabel(stratify_col)
         plt.ylabel('Frecuencia')
@@ -182,10 +186,10 @@ def generate_optimized_histograms(train_set, val_set, test_set, stratify_col='pr
         plt.tight_layout()
         histograms['train'] = plot_to_base64(plt, dpi=dpi)
         plt.close()
-        
-        # Histograma validation set
+
+        # VALIDATION
         plt.figure(figsize=fig_size, dpi=dpi)
-        val_set[stratify_col].value_counts().plot(kind='bar')
+        val_set[stratify_col].value_counts().plot(kind='bar', color='orange')
         plt.title(f'Validation Set - {stratify_col}')
         plt.xlabel(stratify_col)
         plt.ylabel('Frecuencia')
@@ -193,10 +197,10 @@ def generate_optimized_histograms(train_set, val_set, test_set, stratify_col='pr
         plt.tight_layout()
         histograms['validation'] = plot_to_base64(plt, dpi=dpi)
         plt.close()
-        
-        # Histograma test set
+
+        # TEST
         plt.figure(figsize=fig_size, dpi=dpi)
-        test_set[stratify_col].value_counts().plot(kind='bar')
+        test_set[stratify_col].value_counts().plot(kind='bar', color='lightgreen')
         plt.title(f'Test Set - {stratify_col}')
         plt.xlabel(stratify_col)
         plt.ylabel('Frecuencia')
@@ -204,16 +208,10 @@ def generate_optimized_histograms(train_set, val_set, test_set, stratify_col='pr
         plt.tight_layout()
         histograms['test'] = plot_to_base64(plt, dpi=dpi)
         plt.close()
-        
     except Exception as e:
-        print(f"Error generando histogramas: {str(e)}")
-        # Devolver histogramas vacíos en caso de error
-        histograms = {
-            'train': '',
-            'validation': '', 
-            'test': ''
-        }
-    
+        print(f"Error generando histogramas: {e}")
+        histograms = {'train': '', 'validation': '', 'test': ''}
+
     return histograms
 
 def load_kdd_dataset_from_content(content):
@@ -392,8 +390,8 @@ def plot_to_base64(plt, dpi=80):
     """Convertir plot a base64 optimizado"""
     try:
         buffer = BytesIO()
-        plt.savefig(buffer, format='png', bbox_inches='tight', dpi=dpi, 
-                   optimize=True, metadata={'Software': ''})  # Optimizar PNG
+        # Quitar optimize=True (no válido)
+        plt.savefig(buffer, format='png', bbox_inches='tight', dpi=dpi)
         buffer.seek(0)
         image_png = buffer.getvalue()
         buffer.close()
