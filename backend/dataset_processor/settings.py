@@ -14,7 +14,8 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '0.0.0.0',
-    'https://divisiondataset-webservice.onrender.com',  # Dominio de Render
+    'divisiondataset-webservice.onrender.com',
+    '.onrender.com'  # Dominio de Render
 ]
 
 #  Agregar el hostname externo de Render si existe
