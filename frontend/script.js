@@ -70,7 +70,7 @@ async function processDataset() {
 
     try {
         console.log('Enviando solicitud al servidor...');
-        const response = await fetch('http://localhost:8000/api/process/', {
+        const response = await fetch('https://divisiondataset-webservice.onrender.com/api/process/', {
             method: 'POST',
             body: formData
         });
