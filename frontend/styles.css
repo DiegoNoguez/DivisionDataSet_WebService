@@ -1,0 +1,261 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+header {
+    background: linear-gradient(135deg, #4b2c92 0%, #6a11cb 50%, #2575fc 100%);
+    color: white;
+    padding: 40px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    font-weight: 300;
+}
+
+header p {
+    font-size: 1.1em;
+    opacity: 0.9;
+}
+
+main {
+    padding: 40px;
+}
+
+/* Zona de subida */
+.upload-section {
+    margin-bottom: 40px;
+}
+
+.upload-area {
+    border: 3px dashed #7a5af5;
+    border-radius: 10px;
+    padding: 60px 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: #f8f7fc;
+}
+
+.upload-area.dragover {
+    border-color: #6a11cb;
+    background: #ede7ff;
+    transform: scale(1.02);
+}
+
+.upload-content {
+    color: #555;
+}
+
+.upload-icon {
+    font-size: 4em;
+    margin-bottom: 20px;
+    display: block;
+    color: #6a11cb;
+}
+
+.upload-content p {
+    margin-bottom: 20px;
+    font-size: 1.1em;
+}
+
+.upload-content button {
+    background: linear-gradient(135deg, #7a5af5, #6a11cb);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+.upload-content button:hover {
+    background: linear-gradient(135deg, #5d3bdb, #4a1fb6);
+}
+
+/* Info del archivo */
+.file-info {
+    margin-top: 20px;
+    text-align: center;
+    padding: 20px;
+    background: #f0ecff;
+    border-radius: 10px;
+    border: 2px solid #7a5af5;
+}
+
+.file-info button {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 10px;
+    transition: background 0.3s ease;
+}
+
+.file-info button:hover {
+    background: linear-gradient(135deg, #5d3bdb, #1a5fd1);
+}
+
+.file-info button:disabled {
+    background: #b1a4d4;
+    cursor: not-allowed;
+}
+
+/* Resultados */
+.results-section h2 {
+    color: #3e2b89;
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 2em;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.result-card {
+    background: #f9f8ff;
+    padding: 25px;
+    border-radius: 10px;
+    border-left: 4px solid #7a5af5;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.result-card.full-width {
+    grid-column: 1 / -1;
+}
+
+.result-card h3 {
+    color: #3e2b89;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+}
+
+/* Histogramas */
+.histograms-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.histogram-item {
+    text-align: center;
+}
+
+.histogram-item img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.histogram-item h4 {
+    margin: 10px 0;
+    color: #4b2c92;
+}
+
+/* Carga */
+.loading-section {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.loading-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #7a5af5;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Tabla */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background: #5d3bdb;
+    color: white;
+    font-weight: 500;
+}
+
+table tr:nth-child(even) {
+    background: #f7f5ff;
+}
+
+table tr:hover {
+    background: #ece4ff;
+}
+
+/* Info items */
+.info-item {
+    margin: 10px 0;
+    padding: 10px;
+    background: white;
+    border-radius: 5px;
+    border-left: 3px solid #7a5af5;
+}
+
+.info-item strong {
+    color: #3e2b89;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .results-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .histograms-grid {
+        grid-template-columns: 1fr;
+    }
+
+    header h1 {
+        font-size: 2em;
+    }
+
+    main {
+        padding: 20px;
+    }
+}

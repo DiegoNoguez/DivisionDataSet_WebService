@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procesador de Datasets</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Procesador de Datasets</h1>
+            <p>Suba un archivo ARFF para realizar la división y análisis del dataset</p>
+        </header>
+
+        <main>
+            <section class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="fileInput" accept=".arff" hidden>
+                    <div class="upload-content">
+                        <i class="upload-icon">📁</i>
+                        <p>Arrastre y suelte su archivo ARFF aquí o haga clic para seleccionar</p>
+                        <button type="button" onclick="document.getElementById('fileInput').click()">
+                            Seleccionar Archivo
+                        </button>
+                    </div>
+                </div>
+                <div class="file-info" id="fileInfo" style="display: none;">
+                    <p>Archivo seleccionado: <span id="fileName"></span></p>
+                    <button type="button" onclick="processDataset()" id="processBtn">
+                        Procesar Dataset
+                    </button>
+                </div>
+            </section>
+
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <h2>Resultados del Procesamiento</h2>
+                
+                <div class="results-grid">
+                    <div class="result-card">
+                        <h3>Información del Dataset</h3>
+                        <div id="datasetInfo"></div>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>Tamaños de los Conjuntos</h3>
+                        <div id="splitSizes"></div>
+                    </div>
+
+                    <div class="result-card full-width">
+                        <h3>Distribución de Protocol Types</h3>
+                        <div id="protocolDistribution"></div>
+                    </div>
+
+                    <div class="result-card full-width">
+                        <h3>Histogramas</h3>
+                        <div class="histograms-grid" id="histograms"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="loading-section" id="loadingSection" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p>Procesando dataset...</p>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
