@@ -1,4 +1,5 @@
 import json
+import os
 import base64
 import pandas as pd
 import arff
@@ -12,6 +13,12 @@ import matplotlib.pyplot as plt
 import traceback
 import gc  # Garbage collector para liberar memoria
 import psutil  # Para monitorear memoria (opcional)
+
+
+if 'RENDER' in os.environ:
+    # Reducir uso de memoria en Render
+    import matplotlib
+    matplotlib.use('Agg')
 
 def get_memory_usage():
     """Monitorear uso de memoria (útil para debug en Render)"""
