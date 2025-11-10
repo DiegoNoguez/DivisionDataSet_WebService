@@ -173,29 +173,37 @@ function displayProtocolDistribution(distribution) {
     container.innerHTML = html;
 }
 
-function createDistributionTable(data) {
-    let table = '<table><thead><tr><th>Protocol Type</th><th>Count</th><th>Percentage</th></tr></thead><tbody>';
-    
-    const total = Object.values(data).reduce((sum, count) => sum + count, 0);
-    
-    for (const [protocol, count] of Object.entries(data)) {
-        const percentage = ((count / total) * 100).toFixed(2);
-        table += `<tr>
-            <td>${protocol}</td>
-            <td>${count.toLocaleString()}</td>
-            <td>${percentage}%</td>
-        </tr>`;
+function createDistributionTable(distribution) {
+    if (!distribution || !distribution.train || !distribution.validation || !distribution.test) {
+        console.error("Estructura inesperada en protocol_type_distribution:", distribution);
+        return "<p style='color:red;'>Error: datos de distribución no válidos.</p>";
     }
-    
-    table += `<tr class="total-row">
-        <td><strong>Total</strong></td>
-        <td><strong>${total.toLocaleString()}</strong></td>
-        <td><strong>100%</strong></td>
-    </tr>`;
-    
-    table += '</tbody></table>';
-    return table;
+
+    const protocols = Object.keys(distribution.train);
+    const rows = protocols.map(protocol => `
+        <tr>
+            <td>${protocol}</td>
+            <td>${distribution.train[protocol] ?? 0}</td>
+            <td>${distribution.validation[protocol] ?? 0}</td>
+            <td>${distribution.test[protocol] ?? 0}</td>
+        </tr>
+    `).join('');
+
+    return `
+        <table class="distribution-table">
+            <thead>
+                <tr>
+                    <th>Protocolo</th>
+                    <th>Entrenamiento</th>
+                    <th>Validación</th>
+                    <th>Prueba</th>
+                </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+        </table>
+    `;
 }
+
 
 function displayHistograms(histograms) {
     const container = document.getElementById('histograms');
